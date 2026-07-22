@@ -1,6 +1,7 @@
 package de.trainer.repository;
 
 import de.trainer.dto.ActivitySummary;
+import de.trainer.dto.LapSummary;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -62,6 +63,20 @@ public class GarminActivityRepository {
             rs.getString("heart_rate_zone_five_time")
     );
 
+    private final RowMapper<LapSummary> lapMapper = (rs, rowNum) -> new LapSummary(
+            getInteger(rs, "lap"),
+            getDouble(rs, "distance"),
+            getDouble(rs, "avg_speed"),
+            rs.getString("elapsed_time"),
+            getInteger(rs, "avg_hr"),
+            getInteger(rs, "max_hr"),
+            rs.getString("hrz_1_time"),
+            rs.getString("hrz_2_time"),
+            rs.getString("hrz_3_time"),
+            rs.getString("hrz_4_time"),
+            rs.getString("hrz_5_time")
+    );
+
     public GarminActivityRepository(
             @Qualifier("garminJdbcTemplate") JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -85,6 +100,18 @@ public class GarminActivityRepository {
                 LIMIT 1
                 """.formatted(SELECT_COLUMNS);
         return jdbcTemplate.queryForObject(sql, rowMapper);
+    }
+
+    public List<LapSummary> findLaps(String activityId) {
+        String sql = """
+                SELECT lap, distance, avg_speed, elapsed_time,
+                       avg_hr, max_hr,
+                       hrz_1_time, hrz_2_time, hrz_3_time, hrz_4_time, hrz_5_time
+                FROM activity_laps
+                WHERE activity_id = ?
+                ORDER BY lap
+                """;
+        return jdbcTemplate.query(sql, lapMapper, activityId);
     }
 
     private static java.time.LocalDateTime toLocalDateTime(ResultSet rs, String column) throws SQLException {
