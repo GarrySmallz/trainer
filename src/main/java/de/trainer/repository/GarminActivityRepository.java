@@ -15,7 +15,7 @@ import java.util.List;
 public class GarminActivityRepository {
 
     private static final String SELECT_COLUMNS = """
-            activity_id, name, description,
+            activity_id, name, sub_sport,
             start_time, stop_time, elapsed_time,
             distance, steps,
             avg_pace, avg_moving_pace, max_pace,
