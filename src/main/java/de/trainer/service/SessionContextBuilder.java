@@ -1,15 +1,35 @@
 package de.trainer.service;
 
 import de.trainer.dto.ActivitySummary;
+import de.trainer.dto.AthleteProfile;
 import de.trainer.dto.LapSummary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SessionContextBuilder {
+
+    private final Optional<AthleteProfile> athleteProfile;
+
+    public SessionContextBuilder(Optional<AthleteProfile> athleteProfile) {
+        this.athleteProfile = athleteProfile;
+    }
+
     public String build(ActivitySummary a) {
         StringBuilder md = new StringBuilder();
+        md.append("## Session-Kontext (Athlete)\n\n");
+        athleteProfile.ifPresent(profile -> {
+            line(md, "Name", profile.name());
+            line(md, "Sport", profile.sport());
+            line(md, "Level", profile.level());
+            line(md, "Aktuelles Ziel", profile.currentGoal());
+            line(md, "Ziel Datum", profile.goalDate());
+            line(md, "Coach Notes", profile.coachNotes());
+            line(md, "Einschränkungen", profile.constraints());
+            line(md, "Bevorzugte Sprache", profile.preferredLanguage());
+        });
         md.append("# Session-Kontext (Garmin)\n\n");
         md.append("## Meta\n");
         line(md, "Activity-ID", a.activityId());
@@ -47,6 +67,7 @@ public class SessionContextBuilder {
         md.append("- Bei fehlenden Werten nicht spekulieren\n");
         return md.toString();
     }
+
     private void line(StringBuilder md, String label, Object value) {
         if (value == null) {
             return; // null-Felder weglassen
@@ -56,6 +77,7 @@ public class SessionContextBuilder {
 
     public String build(ActivitySummary a, List<LapSummary> laps) {
         StringBuilder md = new StringBuilder();
+        md.append(build(a)); // Basisinfos aus ActivitySummary
         md.append("\n## Laps / Abschnitte\n");
         if (laps == null || laps.isEmpty()) {
             md.append("- Keine Lap-Daten vorhanden.\n");
@@ -79,6 +101,7 @@ public class SessionContextBuilder {
         // ... Hinweise ...
         return md.toString();
     }
+
     private void appendIfPresent(StringBuilder md, String label, Object value) {
         if (value == null) {
             return;
