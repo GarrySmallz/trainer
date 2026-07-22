@@ -1,7 +1,10 @@
 package de.trainer.service;
 
 import de.trainer.dto.ActivitySummary;
+import de.trainer.dto.LapSummary;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class SessionContextBuilder {
@@ -49,5 +52,41 @@ public class SessionContextBuilder {
             return; // null-Felder weglassen
         }
         md.append("- ").append(label).append(": ").append(value).append("\n");
+    }
+
+    public String build(ActivitySummary a, List<LapSummary> laps) {
+        StringBuilder md = new StringBuilder();
+        md.append("\n## Laps / Abschnitte\n");
+        if (laps == null || laps.isEmpty()) {
+            md.append("- Keine Lap-Daten vorhanden.\n");
+        } else {
+            md.append("- Hinweis: Distanz/Tempo pro Lap können in GarminDB fehlen (Issue #317).\n");
+            for (LapSummary lap : laps) {
+                md.append("- Lap ").append(lap.lapNumber()).append(":");
+                appendIfPresent(md, "Distanz (km)", lap.distance());
+                appendIfPresent(md, "Ø Speed", lap.avgSpeed());
+                appendIfPresent(md, "Dauer", lap.elapsedTime());
+                appendIfPresent(md, "Ø HF", lap.avgHr());
+                appendIfPresent(md, "Max HF", lap.maxHr());
+                appendIfPresent(md, "Z1", lap.heartRateZoneOneTime());
+                appendIfPresent(md, "Z2", lap.heartRateZoneTwoTime());
+                appendIfPresent(md, "Z3", lap.heartRateZoneThreeTime());
+                appendIfPresent(md, "Z4", lap.heartRateZoneFourTime());
+                appendIfPresent(md, "Z5", lap.heartRateZoneFiveTime());
+                md.append("\n");
+            }
+        }
+        // ... Hinweise ...
+        return md.toString();
+    }
+    private void appendIfPresent(StringBuilder md, String label, Object value) {
+        if (value == null) {
+            return;
+        }
+        // optionale Filter: "00:00:00" weglassen
+        if (value instanceof String s && (s.isBlank() || s.equals("00:00:00"))) {
+            return;
+        }
+        md.append(" ").append(label).append("=").append(value).append(";");
     }
 }

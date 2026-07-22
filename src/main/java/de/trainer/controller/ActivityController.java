@@ -37,4 +37,10 @@ public class ActivityController {
     public String latestContext() {
         return contextBuilder.build(repository.findLatest());
     }
+
+    @GetMapping("/latest/laps/context")
+    public String latestLapsContext() {
+        ActivitySummary latestActivity = repository.findLatest();
+        return contextBuilder.build(latestActivity, repository.findLaps(latestActivity.activityId()));
+    }
 }
