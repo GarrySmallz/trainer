@@ -23,4 +23,9 @@ public class ActivityController {
     public List<ActivitySummary> list(@RequestParam(defaultValue = "10") int limit) {
         return repository.findRecent(limit);
     }
+
+    @GetMapping("/latest")
+    public ActivitySummary latest() {
+        return repository.findLatest();
+    }
 }

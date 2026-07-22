@@ -37,4 +37,13 @@ public class GarminActivityRepository {
             """;
         return jdbcTemplate.query(sql, rowMapper, limit);
     }
+
+    public ActivitySummary findLatest() {
+        String sql = """
+            SELECT activity_id, name, start_time, distance, avg_hr, training_effect
+            FROM running_activities_view
+            LIMIT 1
+        """;
+        return jdbcTemplate.queryForObject(sql, rowMapper);
+    }
 }
