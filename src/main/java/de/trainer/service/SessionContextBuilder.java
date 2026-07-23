@@ -19,8 +19,9 @@ public class SessionContextBuilder {
 
     public String build(ActivitySummary a) {
         StringBuilder md = new StringBuilder();
-        md.append("## Session-Kontext (Athlete)\n\n");
+
         athleteProfile.ifPresent(profile -> {
+            md.append("# Session-Kontext (Athlete)\n\n");
             line(md, "Name", profile.name());
             line(md, "Sport", profile.sport());
             line(md, "Level", profile.level());
