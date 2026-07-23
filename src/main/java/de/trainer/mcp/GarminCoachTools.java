@@ -7,12 +7,16 @@ import de.trainer.service.GarminSyncService;
 import de.trainer.service.SessionContextBuilder;
 import de.trainer.service.WeeklySummaryService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static de.trainer.service.SyncStatus.*;
+
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class GarminCoachTools {
@@ -44,9 +48,24 @@ public class GarminCoachTools {
     }
 
     @McpTool(name = "sync_garmin_data",
-            description = "Synchronisiert die Garmin-Datenbank mit den neuesten Aktivitäten von Garmin Connect")
+            description = "Startet den Garmin-Sync im Hintergrund und kehrt sofort zurück")
     public String syncGarminData() {
-        return garminSyncService.sync();
+        if (garminSyncService.getStatus().equals(RUNNING)) {
+            return "Sync läuft bereits";
+        }
+        garminSyncService.syncAsync();
+        return "Sync gestartet: Nutze get_sync_status, um den Fortschritt zu überprüfen.";
+    }
+
+    @McpTool(name = "get_sync_status", description = "Prüft den Status des zuletzt gestarteten Garmin-Syncs")
+    public String getSyncStatus() {
+        return switch (garminSyncService.getStatus()) {
+            case IDLE -> "Noch kein Sync gestartet.";
+            case RUNNING -> "Sync läuft noch.";
+            case SUCCESS -> "Sync erfolgreich abgeschlossen." + garminSyncService.getLastResult();
+            case FAILURE -> "Sync fehlgeschlagen: " + garminSyncService.getLastResult();
+            default -> throw new IllegalStateException("Unexpected value: " + garminSyncService.getStatus());
+        };
     }
 
     @McpTool(name = "get_activity_context",
