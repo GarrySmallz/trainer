@@ -11,15 +11,17 @@ import java.util.Optional;
 @Configuration
 public class AthleteProfileConfig {
 
-    @Bean
-    public Optional<AthleteProfile> athleteProfile(
-            ObjectMapper objectMapper) {
-        try (InputStream in =
-                getClass().getResourceAsStream("/athlete-profile.json")) {
-            if (in == null) {
-                return Optional.empty();
+    Optional<AthleteProfile> parseProfile(InputStream in, ObjectMapper objectMapper) {
+        if (in == null) {
+            return Optional.empty();
+        }
+        return Optional.of(objectMapper.readValue(in, AthleteProfile.class));
     }
-            return Optional.of(objectMapper.readValue(in, AthleteProfile.class));
+
+    @Bean
+    public Optional<AthleteProfile> athleteProfile(ObjectMapper objectMapper) {
+        try (InputStream in = getClass().getResourceAsStream("/athlete-profile.json")) {
+            return parseProfile(in, objectMapper);
         } catch (Exception e) {
             throw new RuntimeException("Error reading athlete profile", e);
         }

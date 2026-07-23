@@ -33,3 +33,5 @@ build/
 .vscode/
 /src/main/resources/athlete-profile.json
 /ROADMAP.md
+/src/main/resources/application-local.properties
+/garmindb.log
