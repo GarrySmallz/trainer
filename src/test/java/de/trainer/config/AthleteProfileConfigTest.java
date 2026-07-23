@@ -44,7 +44,7 @@ class AthleteProfileConfigTest {
 
 
         Optional<AthleteProfile> result = athleteProfileConfig.parseProfile(in, objectMapper);
-        
+
         assertThat(result).contains(athleteProfile);
     }
 
