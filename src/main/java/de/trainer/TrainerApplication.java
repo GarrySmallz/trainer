@@ -1,11 +1,14 @@
 package de.trainer;
 
+import de.trainer.security.ApiKeyProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @EnableAsync
+@EnableConfigurationProperties({ApiKeyProperties.class})
 public class TrainerApplication {
 
     public static void main(String[] args) {
