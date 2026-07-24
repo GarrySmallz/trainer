@@ -19,8 +19,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig{
 
-    private final AuthenticationFilter authenticationFilter;
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) {
         http.cors(cors ->
