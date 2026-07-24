@@ -3,11 +3,13 @@ package de.trainer.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class GarminSyncService {
@@ -15,6 +17,9 @@ public class GarminSyncService {
     private final String scriptPath;
 
     private final String pythonPath;
+
+    private final AtomicReference<SyncStatus> status = new AtomicReference<>(SyncStatus.IDLE);
+    private final AtomicReference<String> lastResult = new AtomicReference<>();
 
     private static final Logger log = LoggerFactory.getLogger(GarminSyncService.class);
 
@@ -55,5 +60,26 @@ public class GarminSyncService {
         }
 
         return output.toString();
+    }
+
+    @Async
+    public void syncAsync() {
+        status.set(SyncStatus.RUNNING);
+        try {
+            String output = sync();
+            lastResult.set(output);
+            status.set(SyncStatus.SUCCESS);
+        } catch (GarminSyncException e) {
+            lastResult.set(e.getMessage());
+            status.set(SyncStatus.FAILURE);
+        }
+    }
+
+    public SyncStatus getStatus() {
+        return status.get();
+    }
+
+    public String getLastResult() {
+        return lastResult.get();
     }
 }

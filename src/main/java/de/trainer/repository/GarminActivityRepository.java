@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -112,6 +113,25 @@ public class GarminActivityRepository {
                 ORDER BY lap
                 """;
         return jdbcTemplate.query(sql, lapMapper, activityId);
+    }
+
+    public ActivitySummary findById(String activityId) {
+        String sql = """
+                SELECT %s
+                FROM running_activities_view
+                WHERE activity_id = ?
+        """.formatted(SELECT_COLUMNS);
+        return jdbcTemplate.queryForObject(sql, rowMapper, activityId);
+    }
+
+    public List<ActivitySummary> findSince(LocalDateTime cutoffDate) {
+        String sql = """
+                SELECT %s
+                FROM running_activities_view
+                WHERE start_time >= ?
+                ORDER BY start_time DESC
+                """.formatted(SELECT_COLUMNS);
+        return jdbcTemplate.query(sql, rowMapper, cutoffDate);
     }
 
     private static java.time.LocalDateTime toLocalDateTime(ResultSet rs, String column) throws SQLException {
