@@ -139,12 +139,12 @@ public class GarminActivityRepository {
         return timestamp != null ? timestamp.toLocalDateTime() : null;
     }
 
-    private static Double getDouble(ResultSet rs, String column) throws SQLException {
+    static Double getDouble(ResultSet rs, String column) throws SQLException {
         Object value = rs.getObject(column);
         return value != null ? rs.getDouble(column) : null;
     }
 
-    private static Integer getInteger(ResultSet rs, String column) throws SQLException {
+    static Integer getInteger(ResultSet rs, String column) throws SQLException {
         Object value = rs.getObject(column);
         return value != null ? rs.getInt(column) : null;
     }
