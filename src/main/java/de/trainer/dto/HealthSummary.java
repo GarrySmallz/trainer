@@ -17,7 +17,6 @@ public record HealthSummary(
         String deepSleep,
         String lightSleep,
         String remSleep,
-        String awake,
-        Double weight
+        String awake
 ) {
 }
