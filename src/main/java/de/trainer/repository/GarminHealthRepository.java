@@ -6,6 +6,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import static de.trainer.repository.GarminActivityRepository.getDouble;
 import static de.trainer.repository.GarminActivityRepository.getInteger;
 
@@ -14,10 +16,10 @@ import static de.trainer.repository.GarminActivityRepository.getInteger;
 public class GarminHealthRepository {
 
     private static final String SELECT_COLUMNS = """
-            day,rhr,stress_avg,steps,distance,
+            daily_summary.day,rhr,stress_avg,steps,distance,
             calories_total, bb_charged, bb_min, bb_max,
             rr_waking_avg, total_sleep, deep_sleep, light_sleep,
-            rem_sleep, awake, weight
+            rem_sleep, awake
             """;
 
     private final JdbcTemplate jdbcTemplate;
@@ -42,8 +44,19 @@ public class GarminHealthRepository {
                 rs.getString("deep_sleep"),
                 rs.getString("light_sleep"),
                 rs.getString("rem_sleep"),
-                rs.getString("awake"),
-                getDouble(rs, "weight")
+                rs.getString("awake")
     );
+
+    public List<HealthSummary> findRecent(int limit) {
+        String sql = """
+                SELECT %s
+                FROM daily_summary
+                LEFT JOIN sleep ON daily_summary.day = sleep.day
+                ORDER BY daily_summary.day DESC
+                LIMIT ?
+                """.formatted(SELECT_COLUMNS);
+        return jdbcTemplate.query(sql, rowMapper, limit);
+    }
+
 
 }
