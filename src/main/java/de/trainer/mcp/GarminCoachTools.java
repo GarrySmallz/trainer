@@ -3,7 +3,9 @@ package de.trainer.mcp;
 import de.trainer.dto.ActivityOverview;
 import de.trainer.dto.WeeklyStats;
 import de.trainer.repository.GarminActivityRepository;
+import de.trainer.repository.GarminHealthRepository;
 import de.trainer.service.GarminSyncService;
+import de.trainer.service.HealthContextBuilder;
 import de.trainer.service.SessionContextBuilder;
 import de.trainer.service.WeeklySummaryService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,9 @@ public class GarminCoachTools {
     private final GarminActivityRepository repository;
 
     private final SessionContextBuilder contextBuilder;
+
+    private final GarminHealthRepository healthRepository;
+    private final HealthContextBuilder healthContextBuilder;
 
     private final GarminSyncService garminSyncService;
     private final WeeklySummaryService weeklySummaryService;
@@ -81,4 +86,15 @@ public class GarminCoachTools {
         return weeklySummaryService.weeklySummary();
 
     }
+
+    @McpTool(name = "get_health_context", description = "Liefert Erholungs- und Gesundheitsdaten (Ruhepuls, Schlaf, Stress, Body Battery) " +
+            "der letzten N Tage als Kontext. Nutzen bei Fragen zu Erholung, Schlafqualität, " +
+            "Stress-Level oder Übertraining – nicht für einzelne Trainingsaktivitäten.")
+    public String getHealthContext(
+            @McpToolParam(description = "Anzahl der Tage, für die Health-Daten zurückgegeben werden sollen", required = false) Integer limit) {
+        int actualLimit = limit != null ? limit : 14;
+        return healthContextBuilder.build(healthRepository.findRecent(actualLimit));
+    }
+
+
 }

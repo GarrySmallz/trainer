@@ -20,17 +20,7 @@ public class SessionContextBuilder {
     public String build(ActivitySummary a) {
         StringBuilder md = new StringBuilder();
 
-        athleteProfile.ifPresent(profile -> {
-            md.append("# Session-Kontext (Athlete)\n\n");
-            line(md, "Name", profile.name());
-            line(md, "Sport", profile.sport());
-            line(md, "Level", profile.level());
-            line(md, "Aktuelles Ziel", profile.currentGoal());
-            line(md, "Ziel Datum", profile.goalDate());
-            line(md, "Coach Notes", profile.coachNotes());
-            line(md, "Einschränkungen", profile.constraints());
-            line(md, "Bevorzugte Sprache", profile.preferredLanguage());
-        });
+        appendAthleteProfile(md, athleteProfile);
         md.append("# Session-Kontext (Garmin)\n\n");
         md.append("## Meta\n");
         line(md, "Activity-ID", a.activityId());
@@ -69,7 +59,21 @@ public class SessionContextBuilder {
         return md.toString();
     }
 
-    private void line(StringBuilder md, String label, Object value) {
+    static void appendAthleteProfile(StringBuilder md, Optional<AthleteProfile> athleteProfile) {
+        athleteProfile.ifPresent(profile -> {
+            md.append("# Session-Kontext (Athlete)\n\n");
+            line(md, "Name", profile.name());
+            line(md, "Sport", profile.sport());
+            line(md, "Level", profile.level());
+            line(md, "Aktuelles Ziel", profile.currentGoal());
+            line(md, "Ziel Datum", profile.goalDate());
+            line(md, "Coach Notes", profile.coachNotes());
+            line(md, "Einschränkungen", profile.constraints());
+            line(md, "Bevorzugte Sprache", profile.preferredLanguage());
+        });
+    }
+
+    static void line(StringBuilder md, String label, Object value) {
         if (value == null) {
             return; // null-Felder weglassen
         }
