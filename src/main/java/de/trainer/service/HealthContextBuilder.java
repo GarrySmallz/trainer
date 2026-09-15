@@ -52,5 +52,5 @@ public class HealthContextBuilder {
         return md.toString();
     }
     private String cell(Object value) {
-        return value != null ? value.toString() : "–"; }
+        return value != null ? value.toString().split("\\.")[0] : "–"; }
 }
