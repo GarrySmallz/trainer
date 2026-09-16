@@ -25,6 +25,8 @@ WORKDIR /home/garmindb
 
 ENV HOME=/home/garmindb
 
+RUN mkdir -p /home/garmindb/HealthData/DBs && chown -R appuser:appgroup /home/garmindb/HealthData
+
 COPY --from=builder /target/trainer-*.jar /app/trainer.jar
 
 RUN chown appuser:appgroup /app/trainer.jar
