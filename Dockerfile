@@ -12,13 +12,13 @@ FROM eclipse-temurin:21-jre-jammy
 RUN groupadd -r appgroup  \
     && useradd -r -g appgroup -m -d /home/garmindb appuser  \
     && apt-get update  \
-    && apt-get install -y --no-install-recommends wget python3 python3-venv python3-pip git ca-certificates \
+    && apt-get install -y --no-install-recommends wget python3 python3-venv git ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 ARG GARMINDB_REF=v3.6.7
 RUN git clone --depth 1 --branch ${GARMINDB_REF} https://github.com/tcgoetz/GarminDB.git /opt/garmindb-src \
     && python3 -m venv /opt/garmindb-venv \
-    && /opt/garmindb-venv/bin/pip install --no-cache-dir --upgrade pip setuptools \
+    && /opt/garmindb-venv/bin/pip install --no-cache-dir --upgrade pip setuptools "msgpack>=1.2.1"\
     && /opt/garmindb-venv/bin/pip install --no-cache-dir -r /opt/garmindb-src/requirements.txt \
     && /opt/garmindb-venv/bin/pip install --no-cache-dir /opt/garmindb-src
 
