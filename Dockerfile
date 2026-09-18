@@ -20,7 +20,10 @@ RUN git clone --depth 1 --branch ${GARMINDB_REF} https://github.com/tcgoetz/Garm
     && python3 -m venv /opt/garmindb-venv \
     && /opt/garmindb-venv/bin/pip install --no-cache-dir -r /opt/garmindb-src/requirements.txt \
     && /opt/garmindb-venv/bin/pip install --no-cache-dir /opt/garmindb-src \
-    && /opt/garmindb-venv/bin/pip install --no-cache-dir --upgrade pip "setuptools==78.1.1" "msgpack==1.2.1"
+    && /opt/garmindb-venv/bin/pip install --no-cache-dir --upgrade pip "setuptools==78.1.1" "msgpack==1.2.1" \
+# Cleanup because we upgraded to a fixed version, those are copys of the original ones and we don't need them anymore
+    && rm -rf /opt/garmindb-venv/lib/python3.10/site-packages/pip* \
+    && rm -f /usr/share/python-wheels/*.whl
 
 WORKDIR /home/garmindb
 
