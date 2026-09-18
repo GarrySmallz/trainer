@@ -11,5 +11,11 @@ public record AthleteProfile(
    String coachNotes,
    List<String> constraints,
    String preferredLanguage
-) {}
+) {
+    public AthleteProfile {
+        // prevent manipulation of constraints
+        constraints = constraints != null ?
+                List.copyOf(constraints) : List.of();
+    }
+}
 

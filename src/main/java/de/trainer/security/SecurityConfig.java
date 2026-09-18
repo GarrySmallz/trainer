@@ -33,7 +33,8 @@ public class SecurityConfig{
                 }))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth ->
-                        auth.anyRequest().authenticated())
+                        auth.requestMatchers("/actuator/health/**").permitAll()
+                                .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> {})
                         .protectedResourceMetadata(metadata -> metadata

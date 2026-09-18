@@ -43,7 +43,7 @@ public class GarminSyncService {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    log.info(line);           // live in der Server-Konsole
+                    log.info(line.replace("\r", "").replace("\n", ""));           // live in der Server-Konsole
                     output.append(line).append("\n");  // für später
                 }
             }
