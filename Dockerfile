@@ -20,7 +20,7 @@ RUN git clone --depth 1 --branch ${GARMINDB_REF} https://github.com/tcgoetz/Garm
     && python3 -m venv /opt/garmindb-venv \
     && /opt/garmindb-venv/bin/pip install --no-cache-dir -r /opt/garmindb-src/requirements.txt \
     && /opt/garmindb-venv/bin/pip install --no-cache-dir /opt/garmindb-src \
-    && /opt/garmindb-venv/bin/pip install --no-cache-dir --upgrade pip setuptools "msgpack>=1.2.1"
+    && /opt/garmindb-venv/bin/pip install --no-cache-dir --upgrade pip "setuptools==84.0.0" "msgpack>=1.2.2"
 
 WORKDIR /home/garmindb
 
