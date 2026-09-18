@@ -14,7 +14,8 @@ public record AthleteProfile(
 ) {
     public AthleteProfile {
         // prevent manipulation of constraints
-        constraints = List.copyOf(constraints);
+        constraints = constraints != null ?
+                List.copyOf(constraints) : List.of();
     }
 }
 
