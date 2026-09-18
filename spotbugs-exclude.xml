@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- Spring-managed Singleton-Beans per Constructor-DI: kein externer Zugriff auf gespeicherte Referenzen -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- Alle Queries nutzen "?"-Platzhalter mit echten Bind-Parametern; .formatted() interpoliert nur eine
+         hartkodierte Spaltenlisten-Konstante, keine externe Eingabe erreicht den SQL-Text -->
+    <Match>
+        <Bug pattern="SQL_INJECTION_SPRING_JDBC"/>
+        <Class name="~de\.trainer\.repository\..*"/>
+    </Match>
+
+    <!-- Zeilenumbrüche in SQL-Text-Blöcken sind kosmetisch, %n würde nur die Lesbarkeit verschlechtern -->
+    <Match>
+        <Bug pattern="VA_FORMAT_STRING_USES_NEWLINE"/>
+        <Class name="~de\.trainer\.repository\..*"/>
+    </Match>
+
+    <!-- pythonPath/scriptPath stammen ausschließlich aus @Value-Konfiguration, nicht aus Request-Parametern -->
+    <Match>
+        <Bug pattern="COMMAND_INJECTION"/>
+        <Class name="de.trainer.service.GarminSyncService"/>
+    </Match>
+
+    <!-- Stateless OAuth2/JWT Resource Server, kein Session-Cookie, daher kein CSRF-Vektor -->
+    <Match>
+        <Bug pattern="SPRING_CSRF_PROTECTION_DISABLED"/>
+        <Class name="de.trainer.security.SecurityConfig"/>
+    </Match>
+</FindBugsFilter>
